@@ -14,3 +14,6 @@ sudo python3 cli.py comm COMM_NAME --p PATH_TO_SCRIPT
 sudo python3 cli.py cmdline sys-call  COMM_NAME CMDLINE_NAME --p PATH_TO_SCRIPT
 
 sudo python3 cli.py cmdline uprobe CMDLINE_NAME PATH_TO_BIN FUNC_NAME --p PATH_TO_SCRIPT
+
+## Содержимое скрипта
+Прорамма в отладчике начнет работать только после 3 комнады continue, поэтому для удобства можно в самом начале прописать 2 команды continue подряд и потом уже сам скрипт
