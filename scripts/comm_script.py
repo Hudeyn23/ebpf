@@ -4,6 +4,7 @@ import copy
 import re
 
 from bcc import BPF
+
 bpf_text = """
 #include <linux/sched.h> 
 #include <uapi/linux/bpf.h> 
@@ -60,6 +61,8 @@ int prctl(struct pt_regs *ctx,int option, unsigned long arg2, unsigned long arg3
 """
 isCaught = False
 pid = -1
+
+
 def attach_debug(cpu, data, size):
     global pid
     global isCaught
@@ -68,8 +71,7 @@ def attach_debug(cpu, data, size):
     isCaught = True
 
 
-
-def attach_comm(comm,p):
+def attach_comm(comm, p):
     global bpf_text
     global b
     bpf_text = re.sub(r'\bCOMM_LENGTH\b', str(len(comm)), bpf_text)
@@ -86,11 +88,9 @@ def attach_comm(comm,p):
             b.perf_buffer_poll()
         except KeyboardInterrupt:
             exit()
-    if(p == None):
+    b.cleanup()
+    if (p == None):
         os.system("gdb -p " + pid)
     else:
-        os.system("gdb -p " + pid + " -x" + p)
-
-    return pid
-
+        os.system("gdb -p " + pid + " -x " + p)
 

@@ -129,4 +129,4 @@ def attach_cmdline(comm_name, cmdline,p):
     if (p == None):
         os.system("gdb -p " + pid)
     else:
-        os.system("gdb -p " + pid + " -x" + p)
+        os.system("gdb -p " + pid + " -x " + p)
