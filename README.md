@@ -5,6 +5,7 @@
 ## Установка
 1. На чистой виртуалке было достаточно сделать вот эту инструкцию для сборки из исходников https://github.com/iovisor/bcc/blob/master/INSTALL.md#ubuntu---source
 2. Склонировать данный репо
+3. Установить GDB
 
 ## Запуск для comm
 sudo python3 cli.py comm COMM_NAME --p PATH_TO_SCRIPT
