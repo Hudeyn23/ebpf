@@ -35,8 +35,23 @@ int do_ret_sys_execve(struct pt_regs *ctx)
     bpf_get_current_comm(&comm, sizeof(comm));
     struct data_t data = {};
     data.pid = bpf_get_current_pid_tgid();
-    bpf_trace_printk("%d",data.pid);    
     bpf_get_current_comm(&data.comm, sizeof(data.comm));
+    events.perf_submit(ctx, &data, sizeof(data));
+    bpf_send_signal(19);
+    return 0;
+}
+
+int do_ret_sys_fork(struct pt_regs *ctx)
+{   
+    if(filter_comm()==0) {
+    return 0;
+    }
+    int ret = PT_REGS_RC(ctx);
+     char comm[TASK_COMM_LEN];
+        bpf_get_current_comm(&comm, sizeof(comm));
+        struct data_t data = {};
+        data.pid = bpf_get_current_pid_tgid();    
+     bpf_get_current_comm(&data.comm, sizeof(data.comm));
     events.perf_submit(ctx, &data, sizeof(data));
     bpf_send_signal(19);
     return 0;
@@ -80,6 +95,7 @@ def attach_comm(comm, p):
     b = BPF(text=bpf_text);
     execve_fnname = b.get_syscall_fnname("execve")
     b.attach_kretprobe(event=execve_fnname, fn_name="do_ret_sys_execve")
+    b.attach_kretprobe("schedule_tail, fn_name="do_ret_sys_fork")
     prctl_fnname = b.get_syscall_fnname("prctl")
     b.attach_kretprobe(event=prctl_fnname, fn_name="prctl")
     b["events"].open_perf_buffer(attach_debug)
@@ -93,4 +109,3 @@ def attach_comm(comm, p):
         os.system("gdb -p " + pid)
     else:
         os.system("gdb -p " + pid + " -x " + p)
-
